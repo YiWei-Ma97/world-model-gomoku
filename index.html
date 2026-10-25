@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f3eb"><meta name="description" content="和我们的世界模型下五子棋，自选纯神经或神经加推理，手机浏览器直接玩。">
+<title>和模型下一盘 · 五子棋</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+<header><div><span class="eyebrow">WORLD MODEL · 0.53.5</span><h1>和模型下一盘</h1><p>一张棋盘，两种思考方式。</p></div><span id="ready-badge" class="badge">准备模型中</span></header>
+<section class="mode-section" aria-label="选择模型模式"><div class="mode-switch"><button id="neural" aria-pressed="true"><strong>纯神经</strong><span>凭直觉，快速落子</span></button><button id="world" aria-pressed="false"><strong>神经＋推理</strong><span>检查后续，更仔细</span></button></div><p id="mode-note">只用学到的神经网络选点，不调用世界模型。</p></section>
+<section class="game" aria-label="五子棋对局">
+<div class="game-status"><div><span id="turn-dot" class="turn-dot black"></span><strong id="status" role="status" aria-live="polite">正在准备模型…</strong></div><span id="move-count">第 0 手</span></div>
+<div class="wood"><div class="board" id="board" role="group" aria-label="15乘15五子棋棋盘"></div></div>
+<div class="below-board"><span id="sides">你执黑 · 模型执白</span><span id="timing"></span></div>
+<div class="confirm-bar"><span id="selection">点选棋盘，再确认落子</span><button id="confirm" class="primary" disabled>确认落子</button></div>
+<p id="error" class="error" role="alert" hidden></p><button id="retry" hidden>重新思考</button>
+</section>
+<section class="controls" aria-label="对局设置"><div class="settings-row"><label>棋盘 <select id="size"><option value="15">标准 15 × 15</option><option value="17">17 × 17</option><option value="19">19 × 19</option></select></label><div class="side-switch"><button id="black" aria-pressed="true">执黑先手</button><button id="white" aria-pressed="false">执白后手</button></div></div><div class="actions"><button id="new">新一局</button><button id="undo" disabled>悔棋</button><button id="export">保存棋谱</button></div><div class="scores"><span>你赢 <b id="you-score">0</b></span><span>和棋 <b id="draw-score">0</b></span><span>模型赢 <b id="model-score">0</b></span></div></section>
+<details class="about"><summary>玩法与模型说明</summary><p>黑棋先行，横、竖、斜任意方向连成五子即胜，无禁手。点选空位后按“确认落子”，避免手机误触；也可以再点一次同一位置落子。</p><p>两种模式使用同一套已训练模型。纯神经更快，神经＋推理会额外使用模型自己学到的世界规则。模型仍在学习，局部测试成绩不代表完整对局必胜。</p><p>对局在你的浏览器内运行，不上传棋局、不要求登录，也不会用本局自动更新模型。刷新后可以接着下。</p></details>
+<footer>无需安装 · 支持手机 · <span id="offline-note">首次打开需要下载模型</span></footer>
+</main>
+<script src="game.js"></script>
+</body></html>

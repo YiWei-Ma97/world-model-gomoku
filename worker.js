@@ -1,0 +1,11 @@
+'use strict';
+importScripts('vendor/ort.wasm.min.js','browser-runtime.min.js');
+ort.env.wasm.numThreads=1;ort.env.wasm.wasmPaths=new URL('vendor/',self.location.href).href;
+let session,world,manifest,pending=null,running=false,currentId=0;
+const ready=(async()=>{postMessage({type:'loading',message:'正在载入已训练模型…'});[manifest,world]=await Promise.all([fetch('model/manifest.json').then(r=>r.json()),fetch('model/world.json').then(r=>r.json())]);world=new ModelRuntime.LearnedWorld(world);session=await ort.InferenceSession.create(new URL('model/intuition.onnx',self.location.href).href,{executionProviders:['wasm'],graphOptimizationLevel:'all'});postMessage({type:'ready',version:manifest.architecture_version});})();
+ready.catch(e=>postMessage({type:'error',error:'模型加载失败：'+e.message}));
+async function think(job){await ready;if(job.id!==currentId)return;let started=performance.now(),request=job.request,input=ModelRuntime.neuralInputs(request),feeds={patches:new ort.Tensor('int32',input.patches,[input.actions,9,9]),commands:new ort.Tensor('int32',input.commands,[input.actions,input.commandWidth]),contexts:new ort.Tensor('int32',input.contexts,[input.actions,input.contextWidth])};let tensors=await session.run(feeds);let priorities=Array.from(tensors.priorities.data);Object.values(feeds).forEach(t=>t.dispose());Object.values(tensors).forEach(t=>t.dispose());if(job.id!==currentId)return;let result;
+if(job.mode==='world')result=await world.compose(request,priorities,{current:()=>job.id===currentId,progress:p=>postMessage({type:'progress',id:job.id,...p})});else{let selected=0;for(let i=1;i<priorities.length;i++)if(priorities[i]>priorities[selected])selected=i;result={selected,value:priorities[selected],queries:0,world_used:false};}
+if(job.id===currentId)postMessage({type:'move',id:job.id,...result,elapsed_ms:performance.now()-started,mode:job.mode,version:manifest.architecture_version});}
+async function drain(){if(running)return;running=true;try{while(pending){let job=pending;pending=null;try{await think(job);}catch(e){if(job.id===currentId)postMessage({type:'error',id:job.id,error:e.message});}}}finally{running=false;}}
+onmessage=e=>{if(e.data.type==='cancel'){currentId=e.data.id;pending=null;return;}if(e.data.type==='think'){currentId=e.data.id;pending=e.data;drain();}};

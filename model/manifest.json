@@ -1,0 +1,40 @@
+{
+  "format": "browser-inference-snapshot/1",
+  "architecture_version": "0.53.5",
+  "policy": "intuition-distillation-20261025/rank-repaired",
+  "world": "scale-generalization-20261025/circuits",
+  "source_sha256": "8aa61220c2f1c9bf8c5286cc3bf386b38217c1a6190d79c7df6cb6a4f39f001a",
+  "neural_sha256": "303be5d48305d51a5fddd51f4863bab62dc6d88067bef515321e035e85b55312",
+  "world_sha256": "7207239b8875a97584d1a4b29976dedcc3b840c4b331705c3e43002dde7778ad",
+  "coverage": [
+    {
+      "context": "complete game; turn=O",
+      "min_cells": 49,
+      "max_cells": 4096,
+      "excluded": [
+        25
+      ]
+    },
+    {
+      "context": "complete game; turn=X",
+      "min_cells": 49,
+      "max_cells": 4096,
+      "excluded": [
+        25
+      ]
+    }
+  ],
+  "model_files": {
+    "neural": "intuition.onnx",
+    "world": "world.json"
+  },
+  "game_sizes": [
+    15,
+    17,
+    19
+  ],
+  "training": false,
+  "full_model_and_training_history_included": false,
+  "neural_subgraph": "exact active bound-patch branch for declared covered inputs",
+  "release_scope": "standalone Gomoku inference snapshot only"
+}
